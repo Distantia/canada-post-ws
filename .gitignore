@@ -1,0 +1,12 @@
+# IDE ignores
+/.idea/
+
+# OS / Software ignores
+error_log
+Thumbs.db
+*.orig
+._*
+
+# Other
+/vendor/
+test.php
