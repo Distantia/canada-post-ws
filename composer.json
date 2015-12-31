@@ -1,0 +1,35 @@
+{
+    "name": "distantia/canada-post-ws",
+    "type": "library",
+    "description": "Canada Post Web Services REST API",
+    "keywords": [
+        "canada",
+        "post",
+        "ncshipping",
+        "pickup",
+        "platforms",
+        "postoffice",
+        "rating",
+        "returns",
+        "serviceinfo",
+        "shipping",
+        "tracking"
+    ],
+    "homepage": "http://www.distantia.ca",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Distantia",
+            "homepage": "http://www.distantia.ca"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "symfony/options-resolver": "^3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Distantia\\CanadaPostWs": "src/"
+        }
+    }
+}
