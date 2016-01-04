@@ -94,6 +94,7 @@ abstract class WebService
             $options,
             [
                 'api_key' => $this->options['api_key'],
+                'ssl' => $this->options['ssl'],
             ]
         );
 
