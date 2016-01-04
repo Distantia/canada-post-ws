@@ -1,6 +1,8 @@
 <?php
 namespace Distantia\CanadaPostWs\Type\Common;
 
+use Distantia\CanadaPostWs\RequestProcessor;
+
 class LinkType
 {
     /**
@@ -101,6 +103,45 @@ class LinkType
         $this->mediaType = $mediaType;
 
         return $this;
+    }
+
+    /**
+     * @param $apiKey
+     * @return mixed
+     */
+    public function processLink($apiKey)
+    {
+        $RequestProcessor = new RequestProcessor([
+            'request_url' => $this->getHref(),
+            'headers' => [
+                'Accept: ' . $this->getMediaType(),
+            ],
+            'request' => null,
+            'api_key' => $apiKey,
+        ]);
+
+        $response = $RequestProcessor->process();
+
+        switch ($this->getRel()) {
+            case 'self':
+                // todo
+                break;
+            case 'details':
+                // todo
+                break;
+            case 'price':
+                // todo
+                break;
+            case 'group':
+                // todo
+                break;
+            case 'label':
+                return $response;
+                break;
+            default:
+                return false;
+                break;
+        }
     }
 
 
