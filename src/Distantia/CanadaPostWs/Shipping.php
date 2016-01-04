@@ -44,35 +44,86 @@ class Shipping extends WebService
             $XmlShipment->addChild('quickship-label-requested', ['false', 'true'][(int)$Shipment->isQuickshipLabelRequested()]);
         }
 
-        $XmlShipment->addChild('requested-shipping-point', $Shipment->getRequestedShippingPoint());
-        $XmlShipment->addChild('cpc-pickup-indicator', ['false', 'true'][(int)$Shipment->isCpcPickupIndicator()]);
-        $XmlShipment->addChild('expected-mailing-date', $Shipment->getExpectedMailingDate()->format('Y-m-d'));
+        if (null !== $Shipment->getRequestedShippingPoint()) {
+            $XmlShipment->addChild('requested-shipping-point', $Shipment->getRequestedShippingPoint());
+        }
+
+        if (null !== $Shipment->isCpcPickupIndicator()) {
+            $XmlShipment->addChild('cpc-pickup-indicator', ['false', 'true'][(int)$Shipment->isCpcPickupIndicator()]);
+        }
+
+        if (null !== $Shipment->getExpectedMailingDate()) {
+            $XmlShipment->addChild('expected-mailing-date', $Shipment->getExpectedMailingDate()->format('Y-m-d'));
+        }
 
         $XmlShipmentDeliverySpec = $XmlShipment->addChild('delivery-spec');
         $XmlShipmentDeliverySpec->addChild('service-code', $Shipment->getDeliverySpec()->getServiceCode());
 
         $XmlShipmentDeliverySpecSender = $XmlShipmentDeliverySpec->addChild('sender');
-        $XmlShipmentDeliverySpecSender->addChild('name', $Shipment->getDeliverySpec()->getSender()->getName());
+
+        if (null !== $Shipment->getDeliverySpec()->getSender()->getName()) {
+            $XmlShipmentDeliverySpecSender->addChild('name', $Shipment->getDeliverySpec()->getSender()->getName());
+        }
+
         $XmlShipmentDeliverySpecSender->addChild('company', $Shipment->getDeliverySpec()->getSender()->getCompany());
         $XmlShipmentDeliverySpecSender->addChild('contact-phone', $Shipment->getDeliverySpec()->getSender()->getContactPhone());
 
         $XmlShipmentDeliverySpecSenderAddressDetails = $XmlShipmentDeliverySpecSender->addChild('address-details');
         $XmlShipmentDeliverySpecSenderAddressDetails->addChild('address-line-1', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getAddressLine1());
+
+        if (null !== $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getAddressLine2()) {
+            $XmlShipmentDeliverySpecSenderAddressDetails->addChild('address-line-2', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getAddressLine2());
+        }
+
         $XmlShipmentDeliverySpecSenderAddressDetails->addChild('city', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getCity());
         $XmlShipmentDeliverySpecSenderAddressDetails->addChild('prov-state', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getProvState());
         $XmlShipmentDeliverySpecSenderAddressDetails->addChild('country-code', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getCountryCode());
-        $XmlShipmentDeliverySpecSenderAddressDetails->addChild('postal-zip-code', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getPostalZipCode());
+
+        if (null !== $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getPostalZipCode()) {
+            $XmlShipmentDeliverySpecSenderAddressDetails->addChild('postal-zip-code', $Shipment->getDeliverySpec()->getSender()->getAddressDetails()->getPostalZipCode());
+        }
 
         $XmlShipmentDeliverySpecDestination = $XmlShipmentDeliverySpec->addChild('destination');
-        $XmlShipmentDeliverySpecDestination->addChild('name', $Shipment->getDeliverySpec()->getDestination()->getName());
-        $XmlShipmentDeliverySpecDestination->addChild('company', $Shipment->getDeliverySpec()->getDestination()->getCompany());
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getName()) {
+            $XmlShipmentDeliverySpecDestination->addChild('name', $Shipment->getDeliverySpec()->getDestination()->getName());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getCompany()) {
+            $XmlShipmentDeliverySpecDestination->addChild('company', $Shipment->getDeliverySpec()->getDestination()->getCompany());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getAdditionalAddressInfo()) {
+            $XmlShipmentDeliverySpecDestination->addChild('additional-address-info', $Shipment->getDeliverySpec()->getDestination()->getAdditionalAddressInfo());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getClientVoiceNumber()) {
+            $XmlShipmentDeliverySpecDestination->addChild('client-voice-number', $Shipment->getDeliverySpec()->getDestination()->getClientVoiceNumber());
+        }
 
         $XmlShipmentDeliverySpecDestinationAddressDetails = $XmlShipmentDeliverySpecDestination->addChild('address-details');
-        $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('address-line-1', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getAddressLine1());
-        $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('city', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getCity());
-        $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('prov-state', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getProvState());
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getAddressLine1()) {
+            $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('address-line-1', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getAddressLine1());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getAddressLine2()) {
+            $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('address-line-2', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getAddressLine2());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getCity()) {
+            $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('city', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getCity());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getProvState()) {
+            $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('prov-state', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getProvState());
+        }
+
         $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('country-code', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getCountryCode());
-        $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('postal-zip-code', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getPostalZipCode());
+
+        if (null !== $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getPostalZipCode()) {
+            $XmlShipmentDeliverySpecDestinationAddressDetails->addChild('postal-zip-code', $Shipment->getDeliverySpec()->getDestination()->getAddressDetails()->getPostalZipCode());
+        }
 
         $OptionsList = $Shipment->getDeliverySpec()->getOptions();
 
@@ -104,44 +155,186 @@ class Shipping extends WebService
         $XmlShipmentDeliverySpecParcelCharacteristics = $XmlShipmentDeliverySpec->addChild('parcel-characteristics');
         $XmlShipmentDeliverySpecParcelCharacteristics->addChild('weight', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getWeight());
 
-        $XmlShipmentDeliverySpecParcelCharacteristicsDimensions = $XmlShipmentDeliverySpecParcelCharacteristics->addChild('dimensions');
-        $XmlShipmentDeliverySpecParcelCharacteristicsDimensions->addChild('length', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()->getLength());
-        $XmlShipmentDeliverySpecParcelCharacteristicsDimensions->addChild('width', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()->getWidth());
-        $XmlShipmentDeliverySpecParcelCharacteristicsDimensions->addChild('height', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()->getHeight());
-
-        $XmlShipmentDeliverySpecParcelCharacteristics->addChild('unpackaged', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getParcelCharacteristics()->isUnpackaged()]);
-        $XmlShipmentDeliverySpecParcelCharacteristics->addChild('mailing-tube', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getParcelCharacteristics()->isMailingTube()]);
-        $XmlShipmentDeliverySpecParcelCharacteristics->addChild('oversized', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getParcelCharacteristics()->isOversized()]);
-
-        $XmlShipmentDeliverySpecNotification = $XmlShipmentDeliverySpec->addChild('notification');
-        $XmlShipmentDeliverySpecNotification->addChild('email', $Shipment->getDeliverySpec()->getNotification()->getEmail());
-        $XmlShipmentDeliverySpecNotification->addChild('on-shipment', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getNotification()->isOnShipment()]);
-        $XmlShipmentDeliverySpecNotification->addChild('on-exception', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getNotification()->isOnException()]);
-        $XmlShipmentDeliverySpecNotification->addChild('on-delivery', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getNotification()->isOnDelivery()]);
-
-        $XmlShipmentDeliverySpecPrintPreferences = $XmlShipmentDeliverySpec->addChild('print-preferences');
-
-        if (null !== $Shipment->getDeliverySpec()->getPrintPreferences()->getOutputFormat()) {
-            $XmlShipmentDeliverySpecPrintPreferences->addChild('output-format', $Shipment->getDeliverySpec()->getPrintPreferences()->getOutputFormat());
+        if (null !== $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()) {
+            $XmlShipmentDeliverySpecParcelCharacteristicsDimensions = $XmlShipmentDeliverySpecParcelCharacteristics->addChild('dimensions');
+            $XmlShipmentDeliverySpecParcelCharacteristicsDimensions->addChild('length', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()->getLength());
+            $XmlShipmentDeliverySpecParcelCharacteristicsDimensions->addChild('width', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()->getWidth());
+            $XmlShipmentDeliverySpecParcelCharacteristicsDimensions->addChild('height', $Shipment->getDeliverySpec()->getParcelCharacteristics()->getDimensions()->getHeight());
         }
 
-        if (null !== $Shipment->getDeliverySpec()->getPrintPreferences()->getEncoding()) {
-            $XmlShipmentDeliverySpecPrintPreferences->addChild('encoding', $Shipment->getDeliverySpec()->getPrintPreferences()->getEncoding());
+        if (null !== $Shipment->getDeliverySpec()->getParcelCharacteristics()->isUnpackaged()) {
+            $XmlShipmentDeliverySpecParcelCharacteristics->addChild('unpackaged', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getParcelCharacteristics()->isUnpackaged()]);
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getParcelCharacteristics()->isMailingTube()) {
+            $XmlShipmentDeliverySpecParcelCharacteristics->addChild('mailing-tube', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getParcelCharacteristics()->isMailingTube()]);
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getParcelCharacteristics()->isOversized()) {
+            $XmlShipmentDeliverySpecParcelCharacteristics->addChild('oversized', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getParcelCharacteristics()->isOversized()]);
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getNotification()) {
+            $XmlShipmentDeliverySpecNotification = $XmlShipmentDeliverySpec->addChild('notification');
+            $XmlShipmentDeliverySpecNotification->addChild('email', $Shipment->getDeliverySpec()->getNotification()->getEmail());
+            $XmlShipmentDeliverySpecNotification->addChild('on-shipment', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getNotification()->isOnShipment()]);
+            $XmlShipmentDeliverySpecNotification->addChild('on-exception', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getNotification()->isOnException()]);
+            $XmlShipmentDeliverySpecNotification->addChild('on-delivery', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getNotification()->isOnDelivery()]);
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getPrintPreferences()) {
+            $XmlShipmentDeliverySpecPrintPreferences = $XmlShipmentDeliverySpec->addChild('print-preferences');
+
+            if (null !== $Shipment->getDeliverySpec()->getPrintPreferences()->getOutputFormat()) {
+                $XmlShipmentDeliverySpecPrintPreferences->addChild('output-format', $Shipment->getDeliverySpec()->getPrintPreferences()->getOutputFormat());
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getPrintPreferences()->getEncoding()) {
+                $XmlShipmentDeliverySpecPrintPreferences->addChild('encoding', $Shipment->getDeliverySpec()->getPrintPreferences()->getEncoding());
+            }
         }
 
         $XmlShipmentDeliverySpecPreferences = $XmlShipmentDeliverySpec->addChild('preferences');
         $XmlShipmentDeliverySpecPreferences->addChild('show-packing-instructions', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getPreferences()->isShowPackingInstructions()]);
-        $XmlShipmentDeliverySpecPreferences->addChild('show-postage-rate', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getPreferences()->isShowPostageRate()]);
-        $XmlShipmentDeliverySpecPreferences->addChild('show-insured-value', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getPreferences()->isShowInsuredValue()]);
 
-        $XmlShipmentDeliverySpecReferences = $XmlShipmentDeliverySpec->addChild('references');
-        $XmlShipmentDeliverySpecReferences->addChild('cost-centre', $Shipment->getDeliverySpec()->getReferences()->getCostCentre());
-        $XmlShipmentDeliverySpecReferences->addChild('customer-ref-1', $Shipment->getDeliverySpec()->getReferences()->getCustomerRef1());
-        $XmlShipmentDeliverySpecReferences->addChild('customer-ref-2', $Shipment->getDeliverySpec()->getReferences()->getCustomerRef2());
+        if (null !== $Shipment->getDeliverySpec()->getPreferences()->isShowPostageRate()) {
+            $XmlShipmentDeliverySpecPreferences->addChild('show-postage-rate', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getPreferences()->isShowPostageRate()]);
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getPreferences()->isShowInsuredValue()) {
+            $XmlShipmentDeliverySpecPreferences->addChild('show-insured-value', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getPreferences()->isShowInsuredValue()]);
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getReferences()) {
+            $XmlShipmentDeliverySpecReferences = $XmlShipmentDeliverySpec->addChild('references');
+
+            if (null !== $Shipment->getDeliverySpec()->getReferences()->getCostCentre()) {
+                $XmlShipmentDeliverySpecReferences->addChild('cost-centre', $Shipment->getDeliverySpec()->getReferences()->getCostCentre());
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getReferences()->getCustomerRef1()) {
+                $XmlShipmentDeliverySpecReferences->addChild('customer-ref-1', $Shipment->getDeliverySpec()->getReferences()->getCustomerRef1());
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getReferences()->getCustomerRef2()) {
+                $XmlShipmentDeliverySpecReferences->addChild('customer-ref-2', $Shipment->getDeliverySpec()->getReferences()->getCustomerRef2());
+            }
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getCustoms()) {
+            $XmlShipmentDeliverySpecCustoms = $XmlShipmentDeliverySpec->addChild('customs');
+            $XmlShipmentDeliverySpecCustoms->addChild('currency', $Shipment->getDeliverySpec()->getCustoms()->getCurrency());
+
+            if (null !== $Shipment->getDeliverySpec()->getCustoms()->getConversionFromCad()) {
+                $XmlShipmentDeliverySpecCustoms->addChild('conversion-from-cad', $Shipment->getDeliverySpec()->getCustoms()->getConversionFromCad());
+            }
+
+            $XmlShipmentDeliverySpecCustoms->addChild('reason-for-export', $Shipment->getDeliverySpec()->getCustoms()->getReasonForExport());
+
+            if (null !== $Shipment->getDeliverySpec()->getCustoms()->getOtherReason()) {
+                $XmlShipmentDeliverySpecCustoms->addChild('other-reason', $Shipment->getDeliverySpec()->getCustoms()->getOtherReason());
+            }
+
+            $SkuList = $Shipment->getDeliverySpec()->getCustoms()->getSkuList();
+
+            if (null !== $SkuList) {
+                $XmlShipmentDeliverySpecCustomsSkuList = $XmlShipmentDeliverySpecCustoms->addChild('sku-list');
+
+                if ($SkuList->getItems()) {
+                    foreach ($SkuList->getItems() as $Sku) {
+                        $XmlShipmentDeliverySpecCustomsSkuListItem = $XmlShipmentDeliverySpecCustomsSkuList->addChild('item');
+                        $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('customs-number-of-units', $Sku->getCustomsNumberOfUnits());
+                        $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('customs-description', $Sku->getCustomsDescription());
+
+                        if (null != $Sku->getSku()) {
+                            $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('sku', $Sku->getSku());
+                        }
+
+                        if (null != $Sku->getHsTariffCode()) {
+                            $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('hs-tariff-code', $Sku->getHsTariffCode());
+                        }
+
+                        $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('unit-weight', $Sku->getUnitWeight());
+                        $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('customs-value-per-unit', $Sku->getCustomsValuePerUnit());
+
+                        if (null != $Sku->getCustomsUnitOfMeasure()) {
+                            $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('customs-unit-of-measure', $Sku->getCustomsUnitOfMeasure());
+                        }
+
+                        if (null != $Sku->getCountryOfOrigin()) {
+                            $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('country-of-origin', $Sku->getCountryOfOrigin());
+                        }
+
+                        if (null != $Sku->getProvinceOfOrigin()) {
+                            $XmlShipmentDeliverySpecCustomsSkuListItem->addChild('province-of-origin', $Sku->getProvinceOfOrigin());
+                        }
+                    }
+                }
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getCustoms()->getDutiesAndTaxesPrepaid()) {
+                $XmlShipmentDeliverySpecCustoms->addChild('duties-and-taxes-prepaid', $Shipment->getDeliverySpec()->getCustoms()->getDutiesAndTaxesPrepaid());
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getCustoms()->getCertificateNumber()) {
+                $XmlShipmentDeliverySpecCustoms->addChild('certificate-number', $Shipment->getDeliverySpec()->getCustoms()->getCertificateNumber());
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getCustoms()->getLicenceNumber()) {
+                $XmlShipmentDeliverySpecCustoms->addChild('licence-number', $Shipment->getDeliverySpec()->getCustoms()->getLicenceNumber());
+            }
+
+            if (null !== $Shipment->getDeliverySpec()->getCustoms()->getInvoiceNumber()) {
+                $XmlShipmentDeliverySpecCustoms->addChild('invoice-number', $Shipment->getDeliverySpec()->getCustoms()->getInvoiceNumber());
+            }
+
+        }
 
         $XmlShipmentDeliverySpecSettlementInfo = $XmlShipmentDeliverySpec->addChild('settlement-info');
-        $XmlShipmentDeliverySpecSettlementInfo->addChild('contract-id', $Shipment->getDeliverySpec()->getSettlementInfo()->getContractId());
+
+        if (null !== $Shipment->getDeliverySpec()->getSettlementInfo()->getPaidByCustomer()) {
+            $XmlShipmentDeliverySpecSettlementInfo->addChild('paid-by-customer', $Shipment->getDeliverySpec()->getSettlementInfo()->getPaidByCustomer());
+        }
+
+        if (null !== $Shipment->getDeliverySpec()->getSettlementInfo()->getContractId()) {
+            $XmlShipmentDeliverySpecSettlementInfo->addChild('contract-id', $Shipment->getDeliverySpec()->getSettlementInfo()->getContractId());
+        }
+
+        if (true === $Shipment->getDeliverySpec()->getSettlementInfo()->isCifShipment()) {
+            $XmlShipmentDeliverySpecSettlementInfo->addChild('cif-shipment', ['false', 'true'][(int)$Shipment->getDeliverySpec()->getSettlementInfo()->isCifShipment()]);
+        }
+
         $XmlShipmentDeliverySpecSettlementInfo->addChild('intended-method-of-payment', $Shipment->getDeliverySpec()->getSettlementInfo()->getIntendedMethodOfPayment());
+
+        if (null !== $Shipment->getReturnSpec()) {
+            $XmlShipmentReturnSpec = $XmlShipment->addChild('return-spec');
+            $XmlShipmentReturnSpec->addChild('service-code', $Shipment->getReturnSpec()->getServiceCode());
+
+            $XmlShipmentReturnSpecReturnRecipient = $XmlShipmentReturnSpec->addChild('return-recipient');
+
+            if (null !== $Shipment->getReturnSpec()->getReturnRecipient()->getName()) {
+                $XmlShipmentReturnSpecReturnRecipient->addChild('name', $Shipment->getReturnSpec()->getReturnRecipient()->getName());
+            }
+
+            if (null !== $Shipment->getReturnSpec()->getReturnRecipient()->getCompany()) {
+                $XmlShipmentReturnSpecReturnRecipient->addChild('company', $Shipment->getReturnSpec()->getReturnRecipient()->getCompany());
+            }
+
+            $XmlShipmentReturnSpecReturnRecipientAddressDetails = $XmlShipmentReturnSpecReturnRecipient->addChild('address-details');
+            $XmlShipmentReturnSpecReturnRecipientAddressDetails->addChild('address-line-1', $Shipment->getReturnSpec()->getReturnRecipient()->getAddressDetails()->getAddressLine1());
+
+            if (null !== $Shipment->getReturnSpec()->getReturnRecipient()->getAddressDetails()->getAddressLine2()) {
+                $XmlShipmentReturnSpecReturnRecipientAddressDetails->addChild('address-line-2', $Shipment->getReturnSpec()->getReturnRecipient()->getAddressDetails()->getAddressLine2());
+            }
+
+            $XmlShipmentReturnSpecReturnRecipientAddressDetails->addChild('city', $Shipment->getReturnSpec()->getReturnRecipient()->getAddressDetails()->getCity());
+            $XmlShipmentReturnSpecReturnRecipientAddressDetails->addChild('prov-state', $Shipment->getReturnSpec()->getReturnRecipient()->getAddressDetails()->getProvState());
+            $XmlShipmentReturnSpecReturnRecipientAddressDetails->addChild('postal-zip-code', $Shipment->getReturnSpec()->getReturnRecipient()->getAddressDetails()->getPostalZipCode());
+
+            if (null !== $Shipment->getReturnSpec()->getReturnNotification()) {
+                $XmlShipmentReturnSpec->addChild('return-notification', $Shipment->getReturnSpec()->getReturnNotification());
+            }
+        }
 
         $request = $XmlShipment->asXML();
 
