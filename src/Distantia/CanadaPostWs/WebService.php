@@ -31,19 +31,8 @@ abstract class WebService
     const SHIPPING_CODE_INTERNATIONAL_PRIORITY_WORLDWIDE = 3040;
     const SHIPPING_CODE_INTERNATIONAL_PRIORITY_WORLDWIDE_PAK = 3050;
 
-    private static $retriableErrorCodes = [
-        CURLE_COULDNT_RESOLVE_HOST,
-        CURLE_COULDNT_CONNECT,
-        CURLE_HTTP_NOT_FOUND,
-        CURLE_READ_ERROR,
-        CURLE_OPERATION_TIMEOUTED,
-        CURLE_HTTP_POST_ERROR,
-        CURLE_SSL_CONNECT_ERROR,
-    ];
-
     protected $contractId;
     protected $options;
-    protected $requestOptions;
 
     protected $requestUrl;
 
@@ -97,67 +86,20 @@ abstract class WebService
      */
     protected function processRequest(array $options = [])
     {
-        $resolver = new OptionsResolver();
-        $this->configureRequestOptions($resolver);
-
-        $this->requestOptions = $resolver->resolve($options);
-
-        $requestUrl = $this->requestUrl.$this->requestOptions['request_url'];
-        $headers = $this->requestOptions['headers'];
-
-        // Connection
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $requestUrl);
-        curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 25);
-
-        // SSL
-        if ($this->options['ssl']) {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        } else {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        if ($options['request_url']) {
+            $options['request_url'] = $this->requestUrl.$options['request_url'];
         }
 
-        // Headers
-        curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['PHP_SELF'].' VERSION:'.PHP_VERSION.' (PHP-'.phpversion().')');
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $options = array_merge(
+            $options,
+            [
+                'api_key' => $this->options['api_key'],
+            ]
+        );
 
-        // Auth
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->options['api_key']);
+        $RequestProcessor = new RequestProcessor($options);
 
-        // Request
-        if ($this->requestOptions['request']) {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->requestOptions['request']);
-        }
-
-        // Response
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $response = '';
-
-        $retries = 5;
-        while ($retries--) {
-            $response = curl_exec($ch);
-
-            if ($response === false) {
-                if (false === in_array(curl_errno($ch), self::$retriableErrorCodes, true) || !$retries) {
-                    curl_close($ch);
-
-                    throw new \RuntimeException(sprintf('Curl error (code %s): %s', curl_errno($ch), curl_error($ch)));
-                }
-
-                continue;
-            }
-
-            break;
-        }
-
-        curl_close($ch);
-
-        return $response;
+        return $RequestProcessor->process();
     }
 
     protected function configureOptions(OptionsResolver $resolver)
@@ -178,23 +120,6 @@ abstract class WebService
         $resolver->setAllowedTypes('ssl', 'bool');
 
         $resolver->setAllowedValues('env', [WebService::ENV_DEV, WebService::ENV_PROD]);
-    }
-
-    protected function configureRequestOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'request' => null,
-
-        ]);
-
-        $resolver->setRequired([
-            'request_url',
-            'headers',
-        ]);
-
-        $resolver->setAllowedTypes('request', ['string', 'null']);
-        $resolver->setAllowedTypes('request_url', 'string');
-        $resolver->setAllowedTypes('headers', 'array');
     }
 
     /**
