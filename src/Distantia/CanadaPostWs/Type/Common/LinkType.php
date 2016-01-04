@@ -107,9 +107,10 @@ class LinkType
 
     /**
      * @param $apiKey
+     * @param $ssl
      * @return mixed
      */
-    public function processLink($apiKey)
+    public function processLink($apiKey, $ssl = true)
     {
         $RequestProcessor = new RequestProcessor([
             'request_url' => $this->getHref(),
@@ -118,6 +119,7 @@ class LinkType
             ],
             'request' => null,
             'api_key' => $apiKey,
+            'ssl' => $ssl,
         ]);
 
         $response = $RequestProcessor->process();

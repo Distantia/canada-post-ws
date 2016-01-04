@@ -33,6 +33,7 @@ class RequestProcessor
     {
         $resolver->setDefaults([
             'request' => null,
+            'ssl' => true,
 
         ]);
 
@@ -45,6 +46,8 @@ class RequestProcessor
         $resolver->setAllowedTypes('request', ['string', 'null']);
         $resolver->setAllowedTypes('request_url', 'string');
         $resolver->setAllowedTypes('headers', 'array');
+        $resolver->setAllowedTypes('api_key', 'string');
+        $resolver->setAllowedTypes('ssl', 'bool');
     }
 
     /**
