@@ -88,6 +88,7 @@ class RequestProcessor
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = '';
 
+        $delaySeconds = 0;
         $retries = 5;
         while ($retries--) {
             $response = curl_exec($ch);
@@ -98,6 +99,14 @@ class RequestProcessor
 
                     throw new \RuntimeException(sprintf('Curl error (code %s): %s', curl_errno($ch), curl_error($ch)));
                 }
+
+                continue;
+            }
+
+            // If nothing was received and status wasn't 200 and retries is not 0, try again, but with a delay
+            if (!$response && curl_getinfo($ch, CURLINFO_HTTP_CODE) != '200' && $retries) {
+                $delaySeconds += 2;
+                sleep($delaySeconds);
 
                 continue;
             }
