@@ -377,7 +377,7 @@ class Shipping extends WebService
                 return $ShipmentInfoType;
                 break;
             case 'messages':
-                return $this->getMessagesType($responseXML);
+                return WebService::getMessagesType($responseXML);
                 break;
             default:
                 return false;
@@ -427,7 +427,7 @@ class Shipping extends WebService
                 return $ShipmentInfoType;
                 break;
             case 'messages':
-                return $this->getMessagesType($responseXML);
+                return WebService::getMessagesType($responseXML);
                 break;
             default:
                 return false;
@@ -486,7 +486,7 @@ class Shipping extends WebService
                 return $ManifestsType;
                 break;
             case 'messages':
-                return $this->getMessagesType($responseXML);
+                return WebService::getMessagesType($responseXML);
                 break;
             default:
                 return false;
@@ -534,7 +534,7 @@ class Shipping extends WebService
                 return $ManifestType;
                 break;
             case 'messages':
-                return $this->getMessagesType($responseXML);
+                return WebService::getMessagesType($responseXML);
                 break;
             default:
                 return false;
@@ -647,7 +647,7 @@ class Shipping extends WebService
 
                 return $ManifestsType;
             case 'messages':
-                return $this->getMessagesType($responseXML);
+                return WebService::getMessagesType($responseXML);
                 break;
             default:
                 return false;
