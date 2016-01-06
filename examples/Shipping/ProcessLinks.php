@@ -31,7 +31,8 @@ if ($shipmentResponse instanceof ShipmentInfoType) {
 
     if ($Links) {
         foreach ($Links as $Link) {
-           var_dump($Link->processLink(CANADA_POST_API_KEY, true));
+            echo $Link->getRel() . '<br>';
+            var_dump($Link->processLink(CANADA_POST_API_KEY, true));
         }
     }
 } elseif ($shipmentResponse instanceof MessagesType) {

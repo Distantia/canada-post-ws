@@ -2,6 +2,9 @@
 namespace Distantia\CanadaPostWs\Type\Common;
 
 use Distantia\CanadaPostWs\RequestProcessor;
+use Distantia\CanadaPostWs\Type\Manifest\ManifestType;
+use Distantia\CanadaPostWs\Type\Messages\MessagesType;
+use Distantia\CanadaPostWs\WebService;
 
 class LinkType
 {
@@ -125,39 +128,46 @@ class LinkType
         $response = $RequestProcessor->process();
 
         switch ($this->getRel()) {
-            case 'self':
-                // todo
-                break;
-            case 'details':
-                // todo
-                break;
-            case 'price':
-                // todo
-                break;
-            case 'group':
-                // todo
-                break;
             case 'label':
-                /**
-                 * @todo: Handle xml messages from Canada Post
-                 */
-                if (strpos($response, '<?xml') === 0) {
-                    $response = '';
-                }
-
-                return $response;
+                return self::processApplicationPdfResponse($response);
                 break;
             case 'manifest':
+                $responseXML = new \SimpleXMLElement($response);
+
+                switch ($responseXML->getName()) {
+                    case 'manifest':
+                        $ManifestType = new ManifestType();
+
+                        $ManifestType->setPoNumber((string)$responseXML->{'po-number'});
+
+                        if ($responseXML->{'links'}->link) {
+                            foreach ($responseXML->{'links'}->link as $link) {
+                                $LinkType = new LinkType();
+
+                                $LinkType->setHref((string)$link['href']);
+                                $LinkType->setRel((string)$link['rel']);
+                                $LinkType->setMediaType((string)$link['media-type']);
+
+                                if (isset($link['index'])) {
+                                    $LinkType->setIndex((string)$link['index']);
+                                }
+
+                                $ManifestType->addLink($LinkType);
+                            }
+                        }
+
+                        return $ManifestType;
+                        break;
+                    case 'messages':
+                        return WebService::getMessagesType($responseXML);
+                        break;
+                    default:
+                        return false;
+                        break;
+                }
                 break;
             case 'artifact':
-                /**
-                 * @todo: Handle xml messages from Canada Post
-                 */
-                if (strpos($response, '<?xml') === 0) {
-                    $response = '';
-                }
-
-                return $response;
+                return self::processApplicationPdfResponse($response);
                 break;
             default:
                 return false;
@@ -165,5 +175,27 @@ class LinkType
         }
     }
 
+    /**
+     * @param $response
+     * @return bool|ApplicationPdfType|MessagesType
+     */
+    protected static function processApplicationPdfResponse($response) {
+        if ($response) {
+            if (strpos($response, '<?xml') === 0) {
+                $responseXML = new \SimpleXMLElement($response);
+
+                if ($responseXML->getName()) {
+                    return WebService::getMessagesType($responseXML);
+                }
+            } else {
+                $ApplicationPdfType = new ApplicationPdfType();
+                $ApplicationPdfType->setContent($response);
+
+                return $ApplicationPdfType;
+            }
+        }
+
+        return false;
+    }
 
 }
