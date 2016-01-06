@@ -147,6 +147,18 @@ class LinkType
 
                 return $response;
                 break;
+            case 'manifest':
+                break;
+            case 'artifact':
+                /**
+                 * @todo: Handle xml messages from Canada Post
+                 */
+                if (strpos($response, '<?xml') === 0) {
+                    $response = '';
+                }
+
+                return $response;
+                break;
             default:
                 return false;
                 break;

@@ -127,7 +127,7 @@ abstract class WebService
      * @param \SimpleXMLElement $responseXML
      * @return MessagesType
      */
-    protected function getMessagesType(\SimpleXMLElement $responseXML)
+    public static function getMessagesType(\SimpleXMLElement $responseXML)
     {
         $MessagesType = new MessagesType();
 

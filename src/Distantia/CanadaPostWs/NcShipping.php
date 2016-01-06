@@ -143,7 +143,7 @@ class NcShipping extends WebService
                 return $NonContractShipmentInfoType;
                 break;
             case 'messages':
-                return $this->getMessagesType($responseXML);
+                return WebService::getMessagesType($responseXML);
                 break;
             default:
                 return false;
