@@ -1,5 +1,7 @@
 # Usage
 See examples/
+
+# Installation
+Using composer:
     
-# TODO
-- Find a way to follow links and output class of the right type
+    composer require distantia/canada-post-ws
