@@ -138,6 +138,13 @@ class LinkType
                 // todo
                 break;
             case 'label':
+                /**
+                 * @todo: Handle xml messages from Canada Post
+                 */
+                if (strpos($response, '<?xml') === 0) {
+                    $response = '';
+                }
+
                 return $response;
                 break;
             default:
