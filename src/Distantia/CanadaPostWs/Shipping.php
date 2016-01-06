@@ -625,11 +625,6 @@ class Shipping extends WebService
 
         $responseXML = new SimpleXMLElement($response);
 
-        echo '<p><strong>Dump--Start</strong></p>';
-        var_dump($responseXML);
-        echo '<p><strong>Dump--End</strong></p>';
-        exit;
-
         switch ($responseXML->getName()) {
             case 'manifests':
                 $ManifestsType = new ManifestsType();
