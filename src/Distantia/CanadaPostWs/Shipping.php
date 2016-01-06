@@ -4,6 +4,7 @@ namespace Distantia\CanadaPostWs;
 use Distantia\CanadaPostWs\Type\Common\LinkType;
 use Distantia\CanadaPostWs\Type\Manifest\ManifestsType;
 use Distantia\CanadaPostWs\Type\Manifest\ManifestType;
+use Distantia\CanadaPostWs\Type\Manifest\ShipmentTransmitSetType;
 use Distantia\CanadaPostWs\Type\Messages\MessagesType;
 use Distantia\CanadaPostWs\Type\Shipment\ShipmentInfoType;
 use Distantia\CanadaPostWs\Type\Shipment\ShipmentType;
@@ -532,6 +533,124 @@ class Shipping extends WebService
 
                 return $ManifestType;
                 break;
+            case 'messages':
+                return $this->getMessagesType($responseXML);
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * @param ShipmentTransmitSetType $ShipmentTransmitSet
+     * @return ManifestsType
+     */
+    public function transmitShipments(ShipmentTransmitSetType $ShipmentTransmitSet)
+    {
+        $XmlTransmitSet = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><transmit-set xmlns="http://www.canadapost.ca/ws/manifest-v'.self::API_VERSION.'"/>');
+
+        $XmlTransmitSetGroupIds = $XmlTransmitSet->addChild('group-ids');
+        if (null !== $ShipmentTransmitSet->getGroupIds()) {
+            foreach ($ShipmentTransmitSet->getGroupIds() as $GroupId) {
+                $XmlTransmitSetGroupIds->addChild('group-id', $GroupId->getGroupId());
+            }
+        }
+
+        if (true === $ShipmentTransmitSet->isCpcPickupIndicator()) {
+            $XmlTransmitSet->addChild('cpc-pickup-indicator', ['false', 'true'][(int)$ShipmentTransmitSet->isCpcPickupIndicator()]);
+        }
+
+        $XmlTransmitSet->addChild('requested-shipping-point', $ShipmentTransmitSet->getRequestedShippingPoint());
+
+        if (null !== $ShipmentTransmitSet->getShippingPointId()) {
+            $XmlTransmitSet->addChild('shipping-point-id', $ShipmentTransmitSet->getShippingPointId());
+        }
+
+        $XmlTransmitSet->addChild('detailed-manifests', ['false', 'true'][(int)$ShipmentTransmitSet->isDetailedManifests()]);
+        $XmlTransmitSet->addChild('method-of-payment', $ShipmentTransmitSet->getMethodOfPayment());
+
+        if (null !== $ShipmentTransmitSet->getManifestAddress()) {
+            $XmlTransmitSetManifestAddress = $XmlTransmitSet->addChild('manifest-address');
+
+            $XmlTransmitSetManifestAddress->addChild('manifest-company', $ShipmentTransmitSet->getManifestAddress()->getManifestCompany());
+
+            if (null !== $ShipmentTransmitSet->getManifestAddress()->getManifestName()) {
+                $XmlTransmitSetManifestAddress->addChild('manifest-name', $ShipmentTransmitSet->getManifestAddress()->getManifestName());
+            }
+
+            $XmlTransmitSetManifestAddress->addChild('phone-number', $ShipmentTransmitSet->getManifestAddress()->getPhoneNumber());
+
+            if (null !== $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()) {
+                $XmlTransmitSetManifestAddressAddressDetails = $XmlTransmitSetManifestAddress->addChild('address-details');
+                $XmlTransmitSetManifestAddressAddressDetails->addChild('address-line-1', $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getAddressLine1());
+
+                if (null !== $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getAddressLine2()) {
+                    $XmlTransmitSetManifestAddressAddressDetails->addChild('address-line-2', $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getAddressLine2());
+                }
+
+                $XmlTransmitSetManifestAddressAddressDetails->addChild('city', $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getCity());
+                $XmlTransmitSetManifestAddressAddressDetails->addChild('prov-state', $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getProvState());
+
+                if (null !== $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getCountryCode()) {
+                    $XmlTransmitSetManifestAddressAddressDetails->addChild('country-code', $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getCountryCode());
+                }
+
+                $XmlTransmitSetManifestAddressAddressDetails->addChild('postal-zip-code', $ShipmentTransmitSet->getManifestAddress()->getAddressDetails()->getPostalZipCode());
+            }
+        }
+
+        if (null !== $ShipmentTransmitSet->getCustomerReference()) {
+            $XmlTransmitSet->addChild('customer-references', $ShipmentTransmitSet->getCustomerReference());
+        }
+
+        if (null !== $ShipmentTransmitSet->getExcludedShipments()) {
+            $XmlTransmitSetExcludedShipments = $XmlTransmitSet->addChild('excluded-shipments');
+
+            foreach ($ShipmentTransmitSet->getExcludedShipments() as $ExcludedShipment) {
+                $XmlTransmitSetExcludedShipments->addChild('shipment-id', $ExcludedShipment->getShipmentId());
+            }
+        }
+
+        $request = $XmlTransmitSet->asXML();
+
+        $response = $this->processRequest([
+            'request_url' => '/manifest',
+            'headers' => [
+                'Content-Type: application/vnd.cpc.manifest-v'.self::API_VERSION.'+xml',
+                'Accept: application/vnd.cpc.manifest-v'.self::API_VERSION.'+xml',
+            ],
+            'request' => $request,
+        ]);
+
+        $responseXML = new SimpleXMLElement($response);
+
+        echo '<p><strong>Dump--Start</strong></p>';
+        var_dump($responseXML);
+        echo '<p><strong>Dump--End</strong></p>';
+        exit;
+
+        switch ($responseXML->getName()) {
+            case 'manifests':
+                $ManifestsType = new ManifestsType();
+
+                if ($responseXML->link) {
+                    foreach ($responseXML->link as $link) {
+                        $LinkType = new LinkType();
+
+                        $LinkType->setHref((string)$link['href']);
+                        $LinkType->setRel((string)$link['rel']);
+                        $LinkType->setMediaType((string)$link['media-type']);
+
+                        if (isset($link['index'])) {
+                            $LinkType->setIndex((string)$link['index']);
+                        }
+
+                        $ManifestsType->addLink($LinkType);
+                    }
+                }
+
+                return $ManifestsType;
             case 'messages':
                 return $this->getMessagesType($responseXML);
                 break;
